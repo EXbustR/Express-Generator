@@ -1,10 +1,10 @@
-    
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var User = require('./models/users');
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var JwtStrategy = require('passport-jwt').Strategy 
+var jwt = require('jsonwebtoken'); 
+var LocalStrategy = require('passport-local').Strategy; 
+
+
+
 
 var config = require('./config.js');
 
@@ -21,20 +21,33 @@ var opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.secretKey;
 
-exports.jwtPassport = passport.use(new JwtStrategy(opts,
-    (jwt_payload, done) => {
-        console.log("JWT payload: ", jwt_payload);
-        User.findOne({_id: jwt_payload._id}, (err, user) => {
-            if (err) {
-                return done(err, false);
-            }
-            else if (user) {
-                return done(null, user);
-            }
-            else {
-                return done(null, false);
-            }
-        });
-    }));
+
+
+
+exports.verifyAdmin = function (req, res, next) {
+        console.log(req.user.admin);
+        if (req.user.admin === true) { 
+            next();
+        } else {
+            var err = new Error('THIS OPERATION FOR ADMINS ONLY! You are not authorized to perform this operation!');
+            err.status = 403;
+            return next(err);
+        }
+    };
+    exports.jwtPassport = passport.use(new JwtStrategy(opts,
+        (jwt_payload, done) => {
+            console.log("JWT payload: ", jwt_payload);
+            User.findOne({_id: jwt_payload._id}, (err, user) => {
+                if (err) {
+                    return done(err, false);
+                }
+                else if (user) {
+                    return done(null, user);
+                }
+                else {
+                    return done(null, false);
+                }
+            });
+        }));
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});
