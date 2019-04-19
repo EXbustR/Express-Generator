@@ -18,7 +18,10 @@ var leaderRouter = require('./routes/leaderRouter');
 const mongoose = require('mongoose');
 
 const Dishes = require('./models/dishes');
+const uploadRouter = require('./routes/uploadRouter');
 
+
+app.use('/imageUpload',uploadRouter);
 
 const url = config.mongoUrl;
 const connect = mongoose.connect(url, {useNewUrlParser: true });
