@@ -14,6 +14,8 @@ var usersRouter = require('./routes/users');
 var dishRouter = require('./routes/dishRouter');
 var promoRouter = require('./routes/promoRouter');
 var leaderRouter = require('./routes/leaderRouter');
+var commentRouter = require('./routes/commentRouter');
+
 
 const mongoose = require('mongoose');
 
@@ -22,6 +24,8 @@ const uploadRouter = require('./routes/uploadRouter');
 
 
 app.use('/imageUpload',uploadRouter);
+app.use('/comments',commentRouter);
+
 
 const url = config.mongoUrl;
 const connect = mongoose.connect(url, {useNewUrlParser: true });
